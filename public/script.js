@@ -7,6 +7,7 @@ let totalReactionTime = 0;
 let reactionCount = 0;
 let events = [];
 let reactionStarted = false; // Tracks if the color change has occurred
+let reactionStartTime = 0; // To store the time when the color change happens
 
 document.addEventListener('DOMContentLoaded', () => {
   // DOM Elements
@@ -60,6 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log(`Color change to: ${newColor}`);  // Debugging color change
         square.style.backgroundColor = newColor;
         reactionStarted = true;  // Allow reaction after color change
+        reactionStartTime = Date.now(); // Store the time of color change
 
         // Set a timer for the user to react (1-2 seconds to click or press space)
         let reactionTimeout = setTimeout(() => {
@@ -80,7 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
           if (!reactionStarted) return; // Ignore reactions before color change
           clearTimeout(reactionTimeout); // Stop the timeout if reaction happens
 
-          let reactionDuration = (Date.now() - startTime) / 1000; // Time taken to react (time between color change and click)
+          let reactionDuration = (Date.now() - reactionStartTime) / 1000; // Time taken to react (time between color change and click)
           totalReactionTime += reactionDuration;
           reactionCount++;
           events.push({ reacted: true, time: reactionDuration });
