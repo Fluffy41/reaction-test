@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reaction Test</title>
+    <style>
+        body { text-align: center; font-family: Arial, sans-serif; }
+        #square {
+            width: 200px;
+            height: 200px;
+            background-color: rgb(120, 120, 120);
+            margin: 50px auto;
+            cursor: pointer;
+        }
+        #message { font-size: 20px; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>Reaction Test</h1>
+    <div id="square"></div>
+    <p id="message">Wait for the square to change color...</p>
+    <p id="results"></p>
+
+    <script>
+        let reactionTimes = [];
+        let startTime, timeout, gameEnd;
+        const square = document.getElementById("square");
+        const message = document.getElementById("message");
+        const results = document.getElementById("results");
+        
+        function getRandomDelay(min, max) {
+            return Math.floor(Math.random() * (max - min + 1) + min) * 1000;
+        }
+        
+        function startNewRound() {
+            if (Date.now() > gameEnd) {
+                endGame();
+                return;
+            }
+            
+            let waitTime = getRandomDelay(15, 300);
+            setTimeout(() => {
+                if (Date.now() > gameEnd) return;
+                
+                let brightness = 55 + Math.random() * 5;
+                square.style.backgroundColor = `rgb(${brightness}, ${brightness}, ${brightness})`;
+                startTime = Date.now();
+                message.innerText = "Click now!";
+                
+                timeout = setTimeout(() => {
+                    square.style.backgroundColor = "rgb(120, 120, 120)";
+                    message.innerText = "Too slow! Wait for the next change...";
+                    startNewRound();
+                }, getRandomDelay(1, 2));
+            }, waitTime);
+        }
+        
+        function handleClick() {
+            if (startTime) {
+                let reactionTime = Date.now() - startTime;
+                reactionTimes.push(reactionTime);
+                message.innerText = `Reaction time: ${reactionTime}ms`;
+                clearTimeout(timeout);
+                square.style.backgroundColor = "rgb(120, 120, 120)";
+                startNewRound();
+            }
+        }
+        
+        function endGame() {
+            square.removeEventListener("click", handleClick);
+            let avgTime = reactionTimes.reduce((a, b) => a + b, 0) / reactionTimes.length;
+            results.innerText = `Average Reaction Time: ${avgTime.toFixed(2)}ms`;
+            message.innerText = "";
+        }
+        
+        square.addEventListener("click", handleClick);
+        gameEnd = Date.now() + 30 * 60 * 1000;
+        startNewRound();
+    </script>
+</body>
+</html>
