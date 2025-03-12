@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function showSquare() {
     if (!reactionStarted) {
-      let timeToReact = Math.floor(Math.random() * (300 - 15 + 1)) + 15;
+      let timeToReact = Math.floor(Math.random() * (300000 - 15000 + 1)) + 15;
 
       console.log(`Waiting ${timeToReact / 1000} seconds before changing color...`);
 
