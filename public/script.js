@@ -2,107 +2,81 @@ let timer;
 let startButton;
 let square;
 let timerDisplay;
-let missedCount = 0;
-let totalReactionTime = 0;
-let reactionCount = 0;
-let events = [];
-let reactionStarted = false;
-let reactionStartTime = 0;
-let elementsToHide;
+let title;
+let container;
+let countdown;
+let gameInterval;
+let reactionStart;
+let score = 0;
 
 document.addEventListener('DOMContentLoaded', () => {
   timerDisplay = document.getElementById('timer');
   startButton = document.getElementById('startBtn');
   square = document.getElementById('square');
-  elementsToHide = document.querySelectorAll('.hide-on-start'); // Select all elements that should hide
+  title = document.querySelector('h1');
+  container = document.querySelector('.container');
 
   startButton.addEventListener('click', startGame);
+  square.addEventListener('click', handleSquareClick);
 
   function startGame() {
-    startButton.disabled = true;
-    missedCount = 0;
-    totalReactionTime = 0;
-    reactionCount = 0;
-    events = [];
-    reactionStarted = false;
-
-    // Hide elements except the square
-    elementsToHide.forEach(element => element.classList.add('hidden'));
-
-    square.style.display = 'block';
-    square.style.backgroundColor = 'rgb(50, 50, 50)';
-
-    let countdown = 1800;
+    // Reset game variables
+    score = 0;
+    countdown = 30; // 30 seconds countdown
     timerDisplay.textContent = formatTime(countdown);
 
-    let interval = setInterval(() => {
+    // Hide title and button
+    title.classList.add('hidden');
+    startButton.classList.add('hidden');
+
+    // Show square
+    square.style.display = 'block';
+
+    // Start countdown
+    timer = setInterval(() => {
       countdown--;
       timerDisplay.textContent = formatTime(countdown);
 
       if (countdown <= 0) {
-        clearInterval(interval);
+        clearInterval(timer);
         gameOver();
       }
     }, 1000);
 
-    showSquare();
+    // Start moving square
+    moveSquare();
   }
 
-  function showSquare() {
-    if (!reactionStarted) {
-      let timeToReact = Math.floor(Math.random() * (300000 - 15000 + 1)) + 15;
+  function moveSquare() {
+    let randomDelay = Math.floor(Math.random() * 2000) + 500; // 500ms - 2500ms
+    gameInterval = setTimeout(() => {
+      let maxX = window.innerWidth - square.clientWidth;
+      let maxY = window.innerHeight - square.clientHeight;
 
-      console.log(`Waiting ${timeToReact / 1000} seconds before changing color...`);
+      let randomX = Math.floor(Math.random() * maxX);
+      let randomY = Math.floor(Math.random() * maxY);
 
-      setTimeout(() => {
-        let newColor = lightenGreyColor('rgb(50, 50, 50)');
-        console.log(`Color changed to: ${newColor}`);
-        square.style.backgroundColor = newColor;
-        reactionStarted = true;
-        reactionStartTime = Date.now();
+      square.style.left = `${randomX}px`;
+      square.style.top = `${randomY}px`;
 
-        let reactionTimeout = setTimeout(() => {
-          missedCount++;
-          events.push({ reacted: false, time: null });
-          console.log("Missed reaction!");
-          resetSquare();
-        }, Math.floor(Math.random() * (2000 - 1000 + 1)) + 1000);
+      // Change color to green (ready to be clicked)
+      square.style.backgroundColor = "#00b300";
 
-        function handleReaction() {
-          if (!reactionStarted) return;
-          clearTimeout(reactionTimeout);
-          let reactionDuration = (Date.now() - reactionStartTime) / 1000;
-          totalReactionTime += reactionDuration;
-          reactionCount++;
-          events.push({ reacted: true, time: reactionDuration });
+      // Start reaction timer
+      reactionStart = performance.now();
 
-          console.log(`Reacted in ${reactionDuration.toFixed(3)} seconds`);
-
-          resetSquare();
-        }
-
-        square.addEventListener('click', handleReaction, { once: true });
-        window.addEventListener('keydown', function (e) {
-          if (e.key === " " && reactionStarted) {
-            handleReaction();
-          }
-        }, { once: true });
-
-      }, timeToReact);
-    }
+      moveSquare();
+    }, randomDelay);
   }
 
-  function resetSquare() {
-    reactionStarted = false;
-    square.style.backgroundColor = 'rgb(50, 50, 50)';
-    console.log("Square reset, waiting for next event...");
-    setTimeout(showSquare, 1000);
-  }
+  function handleSquareClick() {
+    let reactionTime = performance.now() - reactionStart;
+    score++;
 
-  function lightenGreyColor(currentColor) {
-    let rgb = currentColor.match(/\d+/g).map(Number);
-    let lightenedGrey = rgb.map(c => Math.min(c + 30, 255));
-    return `rgb(${lightenedGrey.join(', ')})`;
+    // Change color to gray after click
+    square.style.backgroundColor = "#707070";
+
+    console.log(`Reaction Time: ${reactionTime.toFixed(2)}ms | Score: ${score}`);
   }
 
   function formatTime(seconds) {
@@ -110,14 +84,12 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function gameOver() {
-    let avgReactionTime = reactionCount > 0 ? (totalReactionTime / reactionCount).toFixed(3) : 0;
-    alert(`Game Over! \nTotal Misses: ${missedCount} \nAverage Reaction Time: ${avgReactionTime} seconds\nEvents:\n${events.map((event, index) => `Event ${index + 1}: ${event.reacted ? `Reacted in ${event.time.toFixed(3)} seconds` : 'Missed'}`).join('\n')}`);
-
-    startButton.disabled = false;
+    clearTimeout(gameInterval);
+    alert(`Game Over! Your score: ${score}`);
     
-    // Show elements again
-    elementsToHide.forEach(element => element.classList.remove('hidden'));
-
-    console.log("Game Over!");
+    // Reset UI
+    title.classList.remove('hidden');
+    startButton.classList.remove('hidden');
+    square.style.display = 'none';
   }
 });

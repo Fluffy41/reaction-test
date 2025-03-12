@@ -15,7 +15,12 @@ body {
   height: 100vh;
   margin: 0;
   flex-direction: column;
-  position: relative;
+  position: relative; /* Needed for absolute positioning of timer */
+}
+
+/* Hide container elements when the game starts */
+.hidden {
+  display: none !important;
 }
 
 .container {
@@ -23,22 +28,16 @@ body {
   padding: 20px;
 }
 
-h1 {
-  font-size: 2.5rem;
-  margin-bottom: 20px;
-  color: #000000;
-  letter-spacing: 1px;
-  transition: color 0.3s ease;
-}
-
+/* Timer positioned in top-right */
 .timer {
-  font-size: 1rem;
-  color: #000000;
+  font-size: 1.2rem;
   position: absolute;
   top: 10px;
   right: 10px;
+  color: #000;
 }
 
+/* Button Styles */
 .start-button {
   background-color: #6200ea;
   color: white;
@@ -65,9 +64,12 @@ h1 {
 .square {
   width: 120px;
   height: 120px;
-  background-color: #707070;
+  background-color: #707070;  /* Start with grey */
   display: none;
-  margin-top: 30px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   animation: fadeIn 1s ease-in-out;
   transition: background-color 0.5s ease;
 }
@@ -83,17 +85,7 @@ h1 {
   }
 }
 
-.square:hover {
-  background-color: #606060;
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
-}
-
 button:disabled {
   background-color: #aaa;
   cursor: not-allowed;
-}
-
-/* Hide elements when game starts */
-.hidden {
-  display: none;
 }
