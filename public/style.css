@@ -1,92 +1,61 @@
-/* Global Styles */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
+/* Global styling */
 body {
-  background-color: #121212;  /* Dark Mode Background */
-  color: #fff;
-  font-family: 'Arial', sans-serif;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  flex-direction: column;
-  overflow: hidden;
-  transition: background-color 0.3s ease;
+    font-family: Arial, sans-serif;
+    background-color: #121212;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    flex-direction: column;
 }
 
-.container {
-  text-align: center;
-  padding: 20px;
+/* Timer styling */
+#timer {
+    font-size: 2em;
+    margin-bottom: 20px;
+    color: #fff;
 }
 
-h1 {
-  font-size: 2.5rem;
-  margin-bottom: 20px;
-  color: #f4f4f4;
-  letter-spacing: 1px;
-  transition: color 0.3s ease;
+/* Start button styling */
+#startButton {
+    padding: 10px 20px;
+    background-color: #333;
+    border: none;
+    color: #fff;
+    font-size: 1.2em;
+    cursor: pointer;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
 }
 
-.timer {
-  font-size: 1.5rem;
-  margin-top: 20px;
+#startButton:hover {
+    background-color: #444;
 }
 
-/* Button Styles */
-.start-button {
-  background-color: #6200ea;
-  color: white;
-  border: none;
-  padding: 15px 25px;
-  font-size: 18px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-  outline: none;
+/* Square styling */
+#square {
+    width: 200px;
+    height: 200px;
+    background-color: grey;
+    margin-top: 20px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    border-radius: 10px;
 }
 
-.start-button:hover {
-  background-color: #3700b3;
-  transform: scale(1.05);
+/* Hidden elements */
+.hidden {
+    display: none;
 }
 
-.start-button:active {
-  transform: scale(0.98);
+/* Transition effect when the square color changes */
+#square {
+    transition: background-color 0.5s ease, transform 0.3s ease;
 }
 
-/* Square Styles */
-.square {
-  width: 120px;
-  height: 120px;
-  background-color: #4caf50;
-  display: none;
-  border-radius: 8px;
-  margin-top: 30px;
-  animation: fadeIn 1s ease-in-out;
-}
-
-@keyframes fadeIn {
-  0% {
-    opacity: 0;
-    transform: scale(0);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-/* Dark Mode Effect on Hover */
-.square:hover {
-  background-color: #45a049;
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
-}
-
-button:disabled {
-  background-color: #aaa;
-  cursor: not-allowed;
+#square.clicked {
+    transform: scale(1.1);
 }
