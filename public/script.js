@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
     square.style.display = 'block'; // Make square visible
 
     // Set random time interval between 1 and 10 seconds to change color
-    let timeToReact = Math.floor(Math.random() * (10000 - 1000 + 1)) + 1000; 
+    let timeToReact = Math.floor(Math.random() * (10000 - 1000 + 1)) + 1000;
 
     // Change color randomly after timeToReact milliseconds
     let changeColorTimeout = setTimeout(() => {
@@ -65,7 +65,8 @@ document.addEventListener('DOMContentLoaded', () => {
         events.push({ reacted: false, time: null });
         square.style.display = 'none';
 
-        showSquare(); // Continue the game
+        // Continue the game by showing square again
+        showSquare();
       }, Math.floor(Math.random() * (2000 - 1000 + 1)) + 1000); // Wait for 1-2 seconds for reaction
 
       // Handle reactions: click or space key
@@ -79,7 +80,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         square.style.display = 'none'; // Hide square again
 
-        showSquare(); // Continue the game
+        // Continue the game by showing square again
+        showSquare();
       }
 
       square.addEventListener('click', handleReaction); // Click reaction
