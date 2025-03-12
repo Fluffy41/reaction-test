@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
     square.style.backgroundColor = 'rgb(50, 50, 50)';
     square.style.display = 'block'; // Square always visible now
 
-    let countdown = 60;
+    let countdown = 1800;
     timerDisplay.textContent = formatTime(countdown);
 
     let interval = setInterval(() => {
@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function showSquare() {
     if (!reactionStarted) {
-      let timeToReact = Math.floor(Math.random() * (10000 - 5000 + 1)) + 5000;
+      let timeToReact = Math.floor(Math.random() * (300 - 15 + 1)) + 15;
 
       console.log(`Waiting ${timeToReact / 1000} seconds before changing color...`);
 
