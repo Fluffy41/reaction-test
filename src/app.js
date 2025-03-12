@@ -7,6 +7,7 @@ export default function ReactionTest() {
     const [gameEnd, setGameEnd] = useState(Date.now() + 30 * 60 * 1000);
     const [squareColor, setSquareColor] = useState("rgb(120,120,120)");
     const [message, setMessage] = useState("Wait for the square to change color...");
+    const [roundTimeout, setRoundTimeout] = useState(null); // Store round timeout reference
 
     function getRandomDelay(min, max) {
         return Math.floor(Math.random() * (max - min + 1) + min) * 1000;
@@ -19,23 +20,29 @@ export default function ReactionTest() {
                 return;
             }
             let waitTime = getRandomDelay(15, 300);
-            setTimeout(() => {
-                if (Date.now() > gameEnd) return;
-                let brightness = 55 + Math.random() * 5;
-                setSquareColor(`rgb(${brightness}, ${brightness}, ${brightness})`);
-                setStartTime(Date.now());
-                setMessage("Click now!");
-                setIsActive(true);
+            setRoundTimeout(
                 setTimeout(() => {
-                    setSquareColor("rgb(120, 120, 120)");
-                    setMessage("Too slow! Wait for the next change...");
-                    setIsActive(false);
-                    startNewRound();
-                }, getRandomDelay(1, 2));
-            }, waitTime);
+                    if (Date.now() > gameEnd) return;
+                    let brightness = 55 + Math.random() * 5;
+                    setSquareColor(`rgb(${brightness}, ${brightness}, ${brightness})`);
+                    setStartTime(Date.now());
+                    setMessage("Click now!");
+                    setIsActive(true);
+                    setTimeout(() => {
+                        setSquareColor("rgb(120, 120, 120)");
+                        setMessage("Too slow! Wait for the next change...");
+                        setIsActive(false);
+                        startNewRound();
+                    }, getRandomDelay(1, 2));
+                }, waitTime)
+            );
         }
+
         startNewRound();
-    }, []);
+
+        // Cleanup timeout when component unmounts or game ends
+        return () => clearTimeout(roundTimeout);
+    }, [gameEnd, roundTimeout]);
 
     function handleClick() {
         if (isActive && startTime) {
@@ -48,7 +55,7 @@ export default function ReactionTest() {
     }
 
     function endGame() {
-        let avgTime = reactionTimes.length > 0 
+        let avgTime = reactionTimes.length > 0
             ? (reactionTimes.reduce((a, b) => a + b, 0) / reactionTimes.length).toFixed(2)
             : "No reactions recorded";
         setMessage(`Game Over! Average Reaction Time: ${avgTime}ms`);
@@ -61,7 +68,7 @@ export default function ReactionTest() {
                 className="w-48 h-48 rounded-lg cursor-pointer transition-colors duration-300"
                 style={{ backgroundColor: squareColor }}
                 onClick={handleClick}
-            ></div>
+            />
             <p className="mt-4 text-lg">{message}</p>
         </div>
     );
