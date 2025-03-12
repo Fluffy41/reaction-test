@@ -58,7 +58,7 @@ const onReaction = (event) => {
             console.log("Good reaction!");
             square.classList.add('clicked');
             setTimeout(() => square.classList.remove('clicked'), 300);
-            square.style.backgroundColor = 'grey';
+            square.style.backgroundColor = '#808080'; // Reset to default grey color
         } else {
             console.log("Too slow!");
         }
