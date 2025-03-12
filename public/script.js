@@ -1,119 +1,120 @@
 let timer;
-let square;
 let startButton;
+let square;
 let timerDisplay;
-let reactionTime = 0;
 let missedCount = 0;
+let reactionTime = 0;
 let totalReactionTime = 0;
 let reactionCount = 0;
 let events = [];
 
 document.addEventListener('DOMContentLoaded', () => {
-  timer = document.getElementById('timer');
-  square = document.getElementById('square');
-  startButton = document.getElementById('startBtn');
+  // DOM Elements
   timerDisplay = document.getElementById('timer');
+  startButton = document.getElementById('startBtn');
+  square = document.getElementById('square');
 
   startButton.addEventListener('click', startGame);
 
+  // Start game when the Start button is clicked
   function startGame() {
     startButton.disabled = true;
-    reactionTime = 0;
     missedCount = 0;
     totalReactionTime = 0;
     reactionCount = 0;
     events = [];
-    
-    square.style.display = 'none';
-    timerDisplay.textContent = '01:00';
 
+    // Reset Timer and Square
+    square.style.backgroundColor = 'rgb(50, 50, 50)'; // Start with dark grey
+    square.style.display = 'none'; // Invisible square
+
+    // Start the countdown
     let countdown = 60;
     timerDisplay.textContent = formatTime(countdown);
 
-    // Start the 1-minute countdown
     let interval = setInterval(() => {
       countdown--;
       timerDisplay.textContent = formatTime(countdown);
 
       if (countdown <= 0) {
         clearInterval(interval);
-        showSquare();
+        gameOver();
       }
     }, 1000);
+
+    showSquare();
   }
 
+  // Show the square with a random color change
   function showSquare() {
-    square.style.display = 'block';
-    let timeToChange = getRandomTime();
     let startTime = Date.now();
+    square.style.display = 'block'; // Make square visible
 
-    // Change the color of the square every 15-300 seconds
-    let changeInterval = setInterval(() => {
-      if (Date.now() - startTime >= timeToChange) {
-        square.style.backgroundColor = lightenGrey(square.style.backgroundColor);
-        timeToChange = getRandomTime();
-      }
-    }, 1000);
+    // Set random time interval between 1 and 2 seconds to change color
+    let timeToReact = Math.floor(Math.random() * (2000 - 1000 + 1)) + 1000; 
 
-    // Wait for the reaction within 1-2 seconds
-    let reactionStarted = false;
-    let reactionTimer = setTimeout(() => {
-      if (!reactionStarted) {
+    // Change color randomly after timeToReact milliseconds
+    let changeColorTimeout = setTimeout(() => {
+      let newColor = getRandomColor();
+      square.style.backgroundColor = newColor;
+
+      // Set a timer for the user to react (1-2 seconds to click or press space)
+      let reactionTimeout = setTimeout(() => {
+        // Missed the reaction (time expired)
         missedCount++;
         events.push({ reacted: false, time: null });
         square.style.display = 'none';
-        if (reactionCount === 5) { // After 5 events, stop the game
-          endGame();
+
+        if (reactionCount === 5) { // End game after 5 events
+          gameOver();
         } else {
-          showSquare(); // Show next square
+          showSquare(); // Continue the game
+        }
+      }, Math.floor(Math.random() * (2000 - 1000 + 1)) + 1000); // Wait for 1-2 seconds for reaction
+
+      // Handle reactions: click or space key
+      function handleReaction() {
+        clearTimeout(reactionTimeout); // Stop the timeout if reaction happens
+
+        let reactionDuration = (Date.now() - startTime) / 1000; // Time taken to react
+        totalReactionTime += reactionDuration;
+        reactionCount++;
+        events.push({ reacted: true, time: reactionDuration });
+
+        square.style.display = 'none'; // Hide square again
+
+        if (reactionCount === 5) { // End game after 5 events
+          gameOver();
+        } else {
+          showSquare(); // Continue the game
         }
       }
-    }, Math.floor(Math.random() * 1000) + 1000); // Between 1 and 2 seconds
 
-    square.addEventListener('click', recordReaction);
-    window.addEventListener('keydown', function (e) {
-      if (e.key === " " && !reactionStarted) {
-        recordReaction();
-      }
-    });
+      square.addEventListener('click', handleReaction); // Click reaction
+      window.addEventListener('keydown', function (e) {
+        if (e.key === " " && !reactionStarted) {
+          handleReaction();
+        }
+      });
 
-    function recordReaction() {
-      if (reactionStarted) return;
-      reactionStarted = true;
-      clearTimeout(reactionTimer);
-      clearInterval(changeInterval);
-      let reactionDuration = (Date.now() - startTime) / 1000;
-      totalReactionTime += reactionDuration;
-      reactionCount++;
-      events.push({ reacted: true, time: reactionDuration });
-
-      square.style.display = 'none';
-
-      if (reactionCount === 5) { // After 5 events, stop the game
-        endGame();
-      } else {
-        showSquare(); // Show next square
-      }
-    }
+    }, timeToReact);
   }
 
-  function getRandomTime() {
-    return Math.floor((Math.random() * (300 - 15 + 1)) + 15) * 1000;
-  }
-
-  function lightenGrey(color) {
-    let greyValue = parseInt(color.slice(4, 7), 10);
-    greyValue = Math.min(255, greyValue + 20); // Lighten by 20 units
+  // Helper to get a random grey color
+  function getRandomColor() {
+    let greyValue = Math.floor(Math.random() * 50) + 100; // Random grey shade
     return `rgb(${greyValue}, ${greyValue}, ${greyValue})`;
   }
 
+  // Helper to format time for the timer
   function formatTime(seconds) {
     return `${Math.floor(seconds / 60)}:${(seconds % 60).toString().padStart(2, '0')}`;
   }
 
-  function endGame() {
+  // End game and show stats
+  function gameOver() {
     let avgReactionTime = reactionCount > 0 ? (totalReactionTime / reactionCount).toFixed(3) : 0;
     alert(`Game Over! \nTotal Misses: ${missedCount} \nAverage Reaction Time: ${avgReactionTime} seconds\nEvents:\n${events.map((event, index) => `Event ${index + 1}: ${event.reacted ? `Reacted in ${event.time.toFixed(3)} seconds` : 'Missed'}`).join('\n')}`);
-    startButton.disabled = false;
+    startButton.disabled = false; // Re-enable the start button
   }
 });
