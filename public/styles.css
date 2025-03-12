@@ -6,15 +6,15 @@
 }
 
 body {
-    font-family: Arial, sans-serif;
-    background-color: #121212; /* Dark background */
-    color: #fff;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
-    flex-direction: column;
+  font-family: Arial, sans-serif;
+  background-color: #121212;
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+  flex-direction: column;
 }
 
 .container {
@@ -33,11 +33,10 @@ h1 {
 .timer {
   font-size: 1.5rem;
   margin-top: 20px;
-  color: #f4f4f4;
 }
 
 /* Button Styles */
-.start-button {
+.start-button, .test-button {
   background-color: #6200ea;
   color: white;
   border: none;
@@ -47,14 +46,15 @@ h1 {
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.2s ease;
   outline: none;
+  margin: 10px;
 }
 
-.start-button:hover {
+.start-button:hover, .test-button:hover {
   background-color: #3700b3;
   transform: scale(1.05);
 }
 
-.start-button:active {
+.start-button:active, .test-button:active {
   transform: scale(0.98);
 }
 
@@ -62,11 +62,12 @@ h1 {
 .square {
   width: 120px;
   height: 120px;
-  background-color: #4caf50; /* Initial green */
-  display: none; /* Hidden by default */
+  background-color: #707070;  /* Start with grey */
+  display: none;
   border-radius: 8px;
   margin-top: 30px;
   animation: fadeIn 1s ease-in-out;
+  transition: background-color 0.5s ease;
 }
 
 @keyframes fadeIn {
@@ -80,9 +81,8 @@ h1 {
   }
 }
 
-/* Dark Mode Effect on Hover */
 .square:hover {
-  background-color: #45a049;
+  background-color: #606060;
   box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
 }
 

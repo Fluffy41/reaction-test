@@ -1,70 +1,94 @@
 let timer;
-let timerTime = 30 * 60; // 30 minutes in seconds
-let startButton = document.getElementById("startButton");
-let timerDisplay = document.getElementById("timer");
-let square = document.getElementById("square");
-let lastChangeTime = 0;
+let square;
+let startButton;
+let testButton;
+let timerDisplay;
+let reactionTime = 0;
+let interval;
+let testMode = false;
 
-let isRunning = false;
-let lastChange = 0;
-let changeTimeout;
+document.addEventListener('DOMContentLoaded', () => {
+  timer = document.getElementById('timer');
+  square = document.getElementById('square');
+  startButton = document.getElementById('startBtn');
+  testButton = document.getElementById('testBtn');
+  timerDisplay = document.getElementById('timer');
 
-const startTimer = () => {
-    isRunning = true;
-    startButton.style.display = "none"; // Hide the button after click
-    square.style.display = "block"; // Show the square
-    let interval = setInterval(() => {
-        if (timerTime <= 0) {
-            clearInterval(interval);
-            alert("Time's up!");
-            return;
-        }
-        timerTime--;
-        let minutes = Math.floor(timerTime / 60);
-        let seconds = timerTime % 60;
-        timerDisplay.textContent = `${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
+  startButton.addEventListener('click', startGame);
+  testButton.addEventListener('click', toggleTestMode);
+
+  // Initialize the game to be in test mode for faster testing
+  function toggleTestMode() {
+    testMode = !testMode;
+    testButton.textContent = testMode ? "Disable Test Mode" : "Test Mode";
+  }
+
+  function startGame() {
+    startButton.disabled = true;
+    reactionTime = 0;
+    square.style.display = 'none';
+    timerDisplay.textContent = '00:00';
+
+    let randomTime = getRandomTime();
+    let countdown = randomTime / 1000;
+    timerDisplay.textContent = formatTime(countdown);
+    
+    // Start the countdown
+    interval = setInterval(() => {
+      countdown--;
+      timerDisplay.textContent = formatTime(countdown);
+      
+      if (countdown <= 0) {
+        clearInterval(interval);
+        showSquare();
+      }
+    }, 1000);
+  }
+
+  function showSquare() {
+    square.style.display = 'block';
+    let timeToChange = getRandomTime();
+    let startTime = Date.now();
+
+    // Change the color of the square every 15-300 seconds
+    let changeInterval = setInterval(() => {
+      if (Date.now() - startTime >= timeToChange) {
+        square.style.backgroundColor = lightenGrey(square.style.backgroundColor);
+        timeToChange = getRandomTime();
+      }
     }, 1000);
 
-    // Start the square color change loop
-    changeSquareColor();
-};
+    // Wait for a click or space to stop the reaction time
+    let reactionStarted = false;
+    square.addEventListener('click', recordReaction);
+    window.addEventListener('keydown', function (e) {
+      if (e.key === " " && !reactionStarted) {
+        recordReaction();
+      }
+    });
 
-const changeSquareColor = () => {
-    // Randomize the time until the next change (between 15 and 300 seconds)
-    let changeIn = Math.floor(Math.random() * (300 - 15 + 1) + 15);
-    lastChangeTime = Date.now();
-    changeTimeout = setTimeout(() => {
-        if (isRunning) {
-            // Randomize the grey shade
-            let greyShade = Math.floor(Math.random() * 256);
-            square.style.backgroundColor = `rgb(${greyShade}, ${greyShade}, ${greyShade})`;
-            playTone();
-            changeSquareColor();
-        }
-    }, changeIn * 1000);
-};
-
-const playTone = () => {
-    // Play a simple beep sound on color change
-    let audio = new Audio('https://www.soundjay.com/button/beep-07.wav');
-    audio.play();
-};
-
-const onReaction = (event) => {
-    if (event.type === 'click' || (event.type === 'keydown' && event.key === ' ')) {
-        // Check if the square was clicked within the 1-2 second window
-        let timeDiff = (Date.now() - lastChangeTime) / 1000;
-        if (timeDiff <= 2) {
-            console.log("Good reaction!");
-            square.classList.add('clicked');
-            setTimeout(() => square.classList.remove('clicked'), 300);
-            square.style.backgroundColor = '#4caf50'; // Reset to default green color
-        } else {
-            console.log("Too slow!");
-        }
+    function recordReaction() {
+      if (reactionStarted) return;
+      reactionStarted = true;
+      clearInterval(changeInterval);
+      square.style.display = 'none';
+      let reactionDuration = (Date.now() - startTime) / 1000;
+      alert(`Your reaction time: ${reactionDuration.toFixed(3)} seconds`);
+      startButton.disabled = false;
     }
-};
+  }
 
-startButton.addEventListener('click', startTimer);
-square.addEventListener('click', onReaction);
-document.addEventListener('keydown', onReaction);
+  function getRandomTime() {
+    return Math.floor((Math.random() * (300 - 15 + 1)) + 15) * 1000;
+  }
+
+  function lightenGrey(color) {
+    let greyValue = parseInt(color.slice(4, 7), 10);
+    greyValue = Math.min(255, greyValue + 20); // Lighten by 20 units
+    return `rgb(${greyValue}, ${greyValue}, ${greyValue})`;
+  }
+
+  function formatTime(seconds) {
+    return `${Math.floor(seconds / 60)}:${(seconds % 60).toString().padStart(2, '0')}`;
+  }
+});
