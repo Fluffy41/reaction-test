@@ -15,6 +15,7 @@ body {
   height: 100vh;
   margin: 0;
   flex-direction: column;
+  position: relative;
 }
 
 .container {
@@ -31,12 +32,13 @@ h1 {
 }
 
 .timer {
-  font-size: 1.5rem;
-  margin-top: 20px;
+  font-size: 1rem;
   color: #000000;
+  position: absolute;
+  top: 10px;
+  right: 10px;
 }
 
-/* Button Styles */
 .start-button {
   background-color: #6200ea;
   color: white;
@@ -63,7 +65,7 @@ h1 {
 .square {
   width: 120px;
   height: 120px;
-  background-color: #707070;  /* Start with grey */
+  background-color: #707070;
   display: none;
   margin-top: 30px;
   animation: fadeIn 1s ease-in-out;
@@ -89,4 +91,9 @@ h1 {
 button:disabled {
   background-color: #aaa;
   cursor: not-allowed;
+}
+
+/* Hide elements when game starts */
+.hidden {
+  display: none;
 }

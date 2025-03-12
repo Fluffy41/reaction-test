@@ -8,11 +8,13 @@ let reactionCount = 0;
 let events = [];
 let reactionStarted = false;
 let reactionStartTime = 0;
+let elementsToHide;
 
 document.addEventListener('DOMContentLoaded', () => {
   timerDisplay = document.getElementById('timer');
   startButton = document.getElementById('startBtn');
   square = document.getElementById('square');
+  elementsToHide = document.querySelectorAll('.hide-on-start'); // Select all elements that should hide
 
   startButton.addEventListener('click', startGame);
 
@@ -24,8 +26,11 @@ document.addEventListener('DOMContentLoaded', () => {
     events = [];
     reactionStarted = false;
 
+    // Hide elements except the square
+    elementsToHide.forEach(element => element.classList.add('hidden'));
+
+    square.style.display = 'block';
     square.style.backgroundColor = 'rgb(50, 50, 50)';
-    square.style.display = 'block'; // Square always visible now
 
     let countdown = 1800;
     timerDisplay.textContent = formatTime(countdown);
@@ -107,7 +112,12 @@ document.addEventListener('DOMContentLoaded', () => {
   function gameOver() {
     let avgReactionTime = reactionCount > 0 ? (totalReactionTime / reactionCount).toFixed(3) : 0;
     alert(`Game Over! \nTotal Misses: ${missedCount} \nAverage Reaction Time: ${avgReactionTime} seconds\nEvents:\n${events.map((event, index) => `Event ${index + 1}: ${event.reacted ? `Reacted in ${event.time.toFixed(3)} seconds` : 'Missed'}`).join('\n')}`);
+
     startButton.disabled = false;
+    
+    // Show elements again
+    elementsToHide.forEach(element => element.classList.remove('hidden'));
+
     console.log("Game Over!");
   }
 });
