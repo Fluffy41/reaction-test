@@ -36,7 +36,7 @@ h1 {
 }
 
 /* Button Styles */
-.start-button, .test-button {
+.start-button {
   background-color: #6200ea;
   color: white;
   border: none;
@@ -49,12 +49,12 @@ h1 {
   margin: 10px;
 }
 
-.start-button:hover, .test-button:hover {
+.start-button:hover {
   background-color: #3700b3;
   transform: scale(1.05);
 }
 
-.start-button:active, .test-button:active {
+.start-button:active {
   transform: scale(0.98);
 }
 

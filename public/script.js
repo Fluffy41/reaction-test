@@ -1,44 +1,32 @@
 let timer;
 let square;
 let startButton;
-let testButton;
 let timerDisplay;
 let reactionTime = 0;
 let interval;
-let testMode = false;
 
 document.addEventListener('DOMContentLoaded', () => {
   timer = document.getElementById('timer');
   square = document.getElementById('square');
   startButton = document.getElementById('startBtn');
-  testButton = document.getElementById('testBtn');
   timerDisplay = document.getElementById('timer');
 
   startButton.addEventListener('click', startGame);
-  testButton.addEventListener('click', toggleTestMode);
-
-  // Initialize the game to be in test mode for faster testing
-  function toggleTestMode() {
-    testMode = !testMode;
-    testButton.textContent = testMode ? "Disable Test Mode" : "Test Mode";
-  }
 
   function startGame() {
     startButton.disabled = true;
-    testButton.disabled = true; // Disable the test button during the game
     reactionTime = 0;
     square.style.display = 'none';
-    timerDisplay.textContent = '00:00';
+    timerDisplay.textContent = '01:00';
 
-    let randomTime = getRandomTime();
-    let countdown = randomTime / 1000;
+    let countdown = 60;
     timerDisplay.textContent = formatTime(countdown);
-    
-    // Start the countdown
+
+    // Start the 1-minute countdown
     interval = setInterval(() => {
       countdown--;
       timerDisplay.textContent = formatTime(countdown);
-      
+
       if (countdown <= 0) {
         clearInterval(interval);
         showSquare();
@@ -76,7 +64,6 @@ document.addEventListener('DOMContentLoaded', () => {
       let reactionDuration = (Date.now() - startTime) / 1000;
       alert(`Your reaction time: ${reactionDuration.toFixed(3)} seconds`);
       startButton.disabled = false;
-      testButton.disabled = false; // Enable the test button again
     }
   }
 
@@ -91,6 +78,4 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function formatTime(seconds) {
-    return `${Math.floor(seconds / 60)}:${(seconds % 60).toString().padStart(2, '0')}`;
-  }
-});
+    return `${Math.floor(seconds / 60)}:${(seconds % 60).toString().padStart(2,
