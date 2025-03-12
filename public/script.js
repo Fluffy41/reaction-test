@@ -25,6 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function startGame() {
     startButton.disabled = true;
+    testButton.disabled = true; // Disable the test button during the game
     reactionTime = 0;
     square.style.display = 'none';
     timerDisplay.textContent = '00:00';
@@ -75,6 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
       let reactionDuration = (Date.now() - startTime) / 1000;
       alert(`Your reaction time: ${reactionDuration.toFixed(3)} seconds`);
       startButton.disabled = false;
+      testButton.disabled = false; // Enable the test button again
     }
   }
 
