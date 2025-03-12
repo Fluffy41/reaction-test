@@ -50,12 +50,12 @@ document.addEventListener('DOMContentLoaded', () => {
     let startTime = Date.now();
     square.style.display = 'block'; // Make square visible
 
-    // Set random time interval between 1 and 10 seconds to change color
-    let timeToReact = Math.floor(Math.random() * (10000 - 1000 + 1)) + 1000;
+    // Set random time interval between 5 and 10 seconds to change color
+    let timeToReact = Math.floor(Math.random() * (10000 - 5000 + 1)) + 5000;
 
-    // Change color randomly after timeToReact milliseconds
+    // Change color after timeToReact milliseconds
     let changeColorTimeout = setTimeout(() => {
-      let newColor = getRandomColor();
+      let newColor = lightenGreyColor('rgb(50, 50, 50)'); // Lighten grey color
       square.style.backgroundColor = newColor;
 
       // Set a timer for the user to react (1-2 seconds to click or press space)
@@ -94,10 +94,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }, timeToReact);
   }
 
-  // Helper to get a random grey color
-  function getRandomColor() {
-    let greyValue = Math.floor(Math.random() * 50) + 100; // Random grey shade
-    return `rgb(${greyValue}, ${greyValue}, ${greyValue})`;
+  // Helper to lighten grey color
+  function lightenGreyColor(currentColor) {
+    let rgb = currentColor.match(/\d+/g).map(Number); // Convert rgb to array of numbers
+    let lightenedGrey = rgb.map(c => Math.min(c + 30, 255)); // Increase each color by 30
+    return `rgb(${lightenedGrey.join(', ')})`;
   }
 
   // Helper to format time for the timer
