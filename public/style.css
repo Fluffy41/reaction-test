@@ -7,7 +7,7 @@
 
 body {
     font-family: Arial, sans-serif;
-    background-color: #121212;
+    background-color: #121212; /* Dark background */
     color: #fff;
     display: flex;
     justify-content: center;
@@ -33,6 +33,7 @@ h1 {
 .timer {
   font-size: 1.5rem;
   margin-top: 20px;
+  color: #f4f4f4;
 }
 
 /* Button Styles */
@@ -61,8 +62,8 @@ h1 {
 .square {
   width: 120px;
   height: 120px;
-  background-color: #4caf50;
-  display: none;
+  background-color: #4caf50; /* Initial green */
+  display: none; /* Hidden by default */
   border-radius: 8px;
   margin-top: 30px;
   animation: fadeIn 1s ease-in-out;

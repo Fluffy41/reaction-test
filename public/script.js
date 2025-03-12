@@ -11,8 +11,8 @@ let changeTimeout;
 
 const startTimer = () => {
     isRunning = true;
-    startButton.classList.add('hidden');
-    square.classList.remove('hidden');
+    startButton.style.display = "none"; // Hide the button after click
+    square.style.display = "block"; // Show the square
     let interval = setInterval(() => {
         if (timerTime <= 0) {
             clearInterval(interval);
