@@ -56,6 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Change color after timeToReact milliseconds
     let changeColorTimeout = setTimeout(() => {
       let newColor = lightenGreyColor('rgb(50, 50, 50)'); // Lighten grey color
+      console.log(`Color change to: ${newColor}`);  // Debugging color change
       square.style.backgroundColor = newColor;
 
       // Set a timer for the user to react (1-2 seconds to click or press space)
@@ -63,7 +64,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // Missed the reaction (time expired)
         missedCount++;
         events.push({ reacted: false, time: null });
-        square.style.display = 'none';
+        console.log(`Missed reaction after ${timeToReact / 1000} seconds`); // Debugging missed reaction
+        square.style.backgroundColor = 'rgb(50, 50, 50)'; // Reset color back to grey
+        square.style.display = 'none'; // Hide square again
 
         // Continue the game by showing square again
         showSquare();
@@ -78,6 +81,9 @@ document.addEventListener('DOMContentLoaded', () => {
         reactionCount++;
         events.push({ reacted: true, time: reactionDuration });
 
+        console.log(`Reacted in ${reactionDuration.toFixed(3)} seconds`);  // Debugging reaction time
+
+        square.style.backgroundColor = 'rgb(50, 50, 50)'; // Reset color back to grey
         square.style.display = 'none'; // Hide square again
 
         // Continue the game by showing square again
