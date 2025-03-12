@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
     reactionStarted = false;
 
     square.style.backgroundColor = 'rgb(50, 50, 50)';
-    square.style.display = 'none';
+    square.style.display = 'block'; // Square always visible now
 
     let countdown = 60;
     timerDisplay.textContent = formatTime(countdown);
@@ -40,17 +40,18 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }, 1000);
 
-    showSquare(); // Start the game loop
+    showSquare();
   }
 
   function showSquare() {
     if (!reactionStarted) {
-      square.style.display = 'block';
-
       let timeToReact = Math.floor(Math.random() * (10000 - 5000 + 1)) + 5000;
 
-      let changeColorTimeout = setTimeout(() => {
+      console.log(`Waiting ${timeToReact / 1000} seconds before changing color...`);
+
+      setTimeout(() => {
         let newColor = lightenGreyColor('rgb(50, 50, 50)');
+        console.log(`Color changed to: ${newColor}`);
         square.style.backgroundColor = newColor;
         reactionStarted = true;
         reactionStartTime = Date.now();
@@ -58,6 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let reactionTimeout = setTimeout(() => {
           missedCount++;
           events.push({ reacted: false, time: null });
+          console.log("Missed reaction!");
           resetSquare();
         }, Math.floor(Math.random() * (2000 - 1000 + 1)) + 1000);
 
@@ -68,6 +70,8 @@ document.addEventListener('DOMContentLoaded', () => {
           totalReactionTime += reactionDuration;
           reactionCount++;
           events.push({ reacted: true, time: reactionDuration });
+
+          console.log(`Reacted in ${reactionDuration.toFixed(3)} seconds`);
 
           resetSquare();
         }
@@ -86,8 +90,8 @@ document.addEventListener('DOMContentLoaded', () => {
   function resetSquare() {
     reactionStarted = false;
     square.style.backgroundColor = 'rgb(50, 50, 50)';
-    square.style.display = 'none';
-    setTimeout(showSquare, 1000); // Start the next round after 1 second
+    console.log("Square reset, waiting for next event...");
+    setTimeout(showSquare, 1000);
   }
 
   function lightenGreyColor(currentColor) {
@@ -104,5 +108,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let avgReactionTime = reactionCount > 0 ? (totalReactionTime / reactionCount).toFixed(3) : 0;
     alert(`Game Over! \nTotal Misses: ${missedCount} \nAverage Reaction Time: ${avgReactionTime} seconds\nEvents:\n${events.map((event, index) => `Event ${index + 1}: ${event.reacted ? `Reacted in ${event.time.toFixed(3)} seconds` : 'Missed'}`).join('\n')}`);
     startButton.disabled = false;
+    console.log("Game Over!");
   }
 });
