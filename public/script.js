@@ -7,6 +7,7 @@ let reactionTime = 0;
 let totalReactionTime = 0;
 let reactionCount = 0;
 let events = [];
+let reactionStarted = false; // New state to track if reaction is allowed
 
 document.addEventListener('DOMContentLoaded', () => {
   // DOM Elements
@@ -58,6 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
       let newColor = lightenGreyColor('rgb(50, 50, 50)'); // Lighten grey color
       console.log(`Color change to: ${newColor}`);  // Debugging color change
       square.style.backgroundColor = newColor;
+      reactionStarted = true;  // Allow reaction after color change
 
       // Set a timer for the user to react (1-2 seconds to click or press space)
       let reactionTimeout = setTimeout(() => {
@@ -70,10 +72,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Continue the game by showing square again
         showSquare();
+        reactionStarted = false;  // Reset the state
       }, Math.floor(Math.random() * (2000 - 1000 + 1)) + 1000); // Wait for 1-2 seconds for reaction
 
       // Handle reactions: click or space key
       function handleReaction() {
+        if (!reactionStarted) return; // Ignore reactions before color change
         clearTimeout(reactionTimeout); // Stop the timeout if reaction happens
 
         let reactionDuration = (Date.now() - startTime) / 1000; // Time taken to react
@@ -88,11 +92,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Continue the game by showing square again
         showSquare();
+        reactionStarted = false;  // Reset the state
       }
 
       square.addEventListener('click', handleReaction); // Click reaction
       window.addEventListener('keydown', function (e) {
-        if (e.key === " " && !reactionStarted) {
+        if (e.key === " " && reactionStarted) {
           handleReaction();
         }
       });
