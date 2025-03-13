@@ -1,4 +1,3 @@
-let timer;
 let startButton;
 let square;
 let timerDisplay;
@@ -8,14 +7,15 @@ let reactionCount = 0;
 let events = [];
 let reactionStarted = false;
 let reactionStartTime = 0;
-let elementsToHide;
+let scoreDisplay;
+let testInProgress = false; // New flag to track test state
 
 document.addEventListener('DOMContentLoaded', () => {
   timerDisplay = document.getElementById('timer');
   startButton = document.getElementById('startBtn');
   square = document.getElementById('square');
   title = document.querySelector('h1');
-  elementsToHide = document.querySelectorAll('.hide-on-start'); // Select all elements that should hide
+  scoreDisplay = document.getElementById('score');
 
   startButton.addEventListener('click', startGame);
 
@@ -26,18 +26,17 @@ document.addEventListener('DOMContentLoaded', () => {
     reactionCount = 0;
     events = [];
     reactionStarted = false;
+    testInProgress = true; // Set flag to true
 
-    // Hide elements except the square
-    elementsToHide.forEach(element => element.classList.add('hidden'));
-	
-	// Hide title and button
+    // Hide title and button
     title.classList.add('hidden');
     startButton.classList.add('hidden');
 
     square.style.display = 'block';
     square.style.backgroundColor = '#ffffff';
 
-    let countdown = 1800;
+    let countdown = 1800; // 30 minutes
+    //let countdown = 10 // 10 seconds
     timerDisplay.textContent = formatTime(countdown);
 
     let interval = setInterval(() => {
@@ -46,27 +45,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (countdown <= 0) {
         clearInterval(interval);
-        gameOver();
+        testComplete();
       }
     }, 1000);
 
     showSquare();
   }
 
+  let reactionInProgress = false;
+
   function showSquare() {
-    if (!reactionStarted) {
-      let timeToReact = Math.floor(Math.random() * (210000 - 15000 + 1)) + 15;
+    if (!reactionStarted && !reactionInProgress && testInProgress) { // Check flag before starting new event
+      reactionInProgress = true;
+      let timeToReact = Math.floor(Math.random() * (210000 - 15000 + 1)) + 1000; // 210 - 15 seconds
+      //let timeToReact = Math.floor(Math.random() * (5000 - 1000 + 1)) + 1000; // 1 - 5 seconds
 
       console.log(`Waiting ${timeToReact / 1000} seconds before changing color...`);
 
+      square.classList.add('blinking-border'); // Start blinking
+
       setTimeout(() => {
+        if (!testInProgress) return; // Check flag before changing color
         let newColor = 'rgb(165, 165, 165)';
         console.log(`Color changed to: ${newColor}`);
         square.style.backgroundColor = newColor;
+        square.classList.remove('blinking-border'); // Stop blinking
         reactionStarted = true;
         reactionStartTime = Date.now();
 
         let reactionTimeout = setTimeout(() => {
+          if (!testInProgress) return; // Check flag before handling missed reaction
           missedCount++;
           events.push({ reacted: false, time: null });
           console.log("Missed reaction!");
@@ -87,11 +95,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         square.addEventListener('click', handleReaction, { once: true });
-        window.addEventListener('keydown', function (e) {
+
+        function handleKeydown(e) {
           if (e.key === " " && reactionStarted) {
             handleReaction();
+            window.removeEventListener('keydown', handleKeydown);
           }
-        }, { once: true });
+        }
+
+        window.addEventListener('keydown', handleKeydown, { once: true });
 
       }, timeToReact);
     }
@@ -99,26 +111,54 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function resetSquare() {
     reactionStarted = false;
+    reactionInProgress = false;
     square.style.backgroundColor = '#ffffff';
     console.log("Square reset, waiting for next event...");
-    setTimeout(showSquare, 1000);
+    showSquare();
   }
 
   function formatTime(seconds) {
     return `${Math.floor(seconds / 60)}:${(seconds % 60).toString().padStart(2, '0')}`;
   }
 
-  function gameOver() {
+  function testComplete() {
+    testInProgress = false; // Reset flag to false
     let avgReactionTime = reactionCount > 0 ? (totalReactionTime / reactionCount).toFixed(3) : 0;
-    alert(`Game Over! \nTotal Misses: ${missedCount} \nAverage Reaction Time: ${avgReactionTime} seconds\nEvents:\n${events.map((event, index) => `Event ${index + 1}: ${event.reacted ? `Reacted in ${event.time.toFixed(3)} seconds` : 'Missed'}`).join('\n')}`);
+    scoreDisplay.innerHTML = `
+    <span>Test Complete!</span><br>
+    <span>Total Misses: ${missedCount}</span><br>
+    <span>Average Reaction Time: ${avgReactionTime} seconds</span><br> 
+    <table class="events-table">
+      <thead>
+        <tr>
+          <th>Event</th>
+          <th>Reaction Time (seconds)</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${events.map((event, index) => `
+          <tr>
+            <td>Event ${index + 1}</td>
+            <td>${event.reacted ? event.time.toFixed(3) : 'Missed'}</td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+  `;
+
+    scoreDisplay.style.display = 'block'; // Make the score visible
 
     startButton.disabled = false;
-    
+
     // Show elements again
-    elementsToHide.forEach(element => element.classList.remove('hidden'));
     title.classList.remove('hidden');
     startButton.classList.remove('hidden');
 
-    console.log("Game Over!");
+    // Reset and hide the square
+    square.style.display = 'none';
+    square.classList.remove('blinking-border');
+    square.style.backgroundColor = '#ffffff';
+
+    console.log("Test Complete!");
   }
 });
