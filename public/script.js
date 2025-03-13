@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
     startButton.classList.add('hidden');
 
     square.style.display = 'block';
-    square.style.backgroundColor = 'rgb(218, 218, 218)';
+    square.style.backgroundColor = '#ffffff';
 
     let countdown = 1800;
     timerDisplay.textContent = formatTime(countdown);
@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function showSquare() {
     if (!reactionStarted) {
-      let timeToReact = Math.floor(Math.random() * (100000 - 15000 + 1)) + 15;
+      let timeToReact = Math.floor(Math.random() * (210000 - 15000 + 1)) + 15;
 
       console.log(`Waiting ${timeToReact / 1000} seconds before changing color...`);
 
