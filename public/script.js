@@ -99,7 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function resetSquare() {
     reactionStarted = false;
-    square.style.backgroundColor = 'rgb(218, 218, 218)';
+    square.style.backgroundColor = '#ffffff';
     console.log("Square reset, waiting for next event...");
     setTimeout(showSquare, 1000);
   }
