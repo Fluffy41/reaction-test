@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
     startButton.classList.add('hidden');
 
     square.style.display = 'block';
-    square.style.backgroundColor = 'rgb(50, 50, 50)';
+    square.style.backgroundColor = 'rgb(218, 218, 218)';
 
     let countdown = 1800;
     timerDisplay.textContent = formatTime(countdown);
@@ -55,12 +55,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function showSquare() {
     if (!reactionStarted) {
-      let timeToReact = Math.floor(Math.random() * (300000 - 15000 + 1)) + 15;
+      let timeToReact = Math.floor(Math.random() * (100000 - 15000 + 1)) + 15;
 
       console.log(`Waiting ${timeToReact / 1000} seconds before changing color...`);
 
       setTimeout(() => {
-        let newColor = lightenGreyColor('rgb(50, 50, 50)');
+        let newColor = 'rgb(165, 165, 165)';
         console.log(`Color changed to: ${newColor}`);
         square.style.backgroundColor = newColor;
         reactionStarted = true;
@@ -99,15 +99,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function resetSquare() {
     reactionStarted = false;
-    square.style.backgroundColor = 'rgb(50, 50, 50)';
+    square.style.backgroundColor = 'rgb(218, 218, 218)';
     console.log("Square reset, waiting for next event...");
     setTimeout(showSquare, 1000);
-  }
-
-  function lightenGreyColor(currentColor) {
-    let rgb = currentColor.match(/\d+/g).map(Number);
-    let lightenedGrey = rgb.map(c => Math.min(c + 30, 255));
-    return `rgb(${lightenedGrey.join(', ')})`;
   }
 
   function formatTime(seconds) {
