@@ -142,7 +142,7 @@ button:disabled {
 }
 
 .blinking-border {
-  animation: blinkBorder 500ms steps(1) infinite;
+  animation: blinkBorder 2s steps(1) infinite;
 }
 
 .credits {
